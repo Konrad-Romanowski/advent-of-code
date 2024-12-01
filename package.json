@@ -1,0 +1,9 @@
+{
+  "name": "advent-of-code",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "keywords": [],
+  "author": "Konrad Romanowski",
+  "license": "MIT"
+}
