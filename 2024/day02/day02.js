@@ -38,9 +38,9 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
 
     let linesToImprove = 0;
     for(let i = 0; i < unsafe.length; i++) {
-        const lineCopy = structuredClone(unsafe[i]);
-        for(let j = 0; j < lineCopy.length; j++) {
-            if(isSafe([...lineCopy.slice(0,j) , ...lineCopy.slice(j+1)])) {
+        const line = unsafe[i];
+        for(let j = 0; j < line.length; j++) {
+            if(isSafe([...line.slice(0,j) , ...line.slice(j+1)])) {
                 linesToImprove++;
                 break;
             }
