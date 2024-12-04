@@ -16,91 +16,35 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
     }
 
     let word = "XMAS";
-
-    // part 1
     let part1 = 0;
-    // for each x in X look 3 steps ahead in every direction
-    // check if we are not out of the bounds of the map
-    // and check if in each consecutive step there is a correct letter
-    for (const x of X) {
+
+    for(const x of X) {
         let [r,c] = x;
-        
-        // check NE
-        for(let i=1; i<=3; i++) {
-            if(0 <= r-i && r-i < map.length && 0 <= c-i && c-i < map[0].length && map[r-i][c-i] === word[i]) {
-                if(i === 3) part1++;
-            } else {
-                break;
-            }
-        }
 
-        // 2. check N
-        for(let i=1; i<=3; i++) {
-            if(0 <= r-i && r-i < map.length && 0 <= c && c < map[0].length && map[r-i][c] === word[i]) {
-                if(i === 3) part1++;
-            } else {
-                break;
-            }
-        }
+        const directions = [
+            [-1,-1],[-1,0],[-1,1],
+            [ 0,-1],       [ 0,1],
+            [ 1,-1],[ 1,0],[ 1,1],
+        ];
 
-        // 3. check NE
-        for(let i=1; i<=3; i++) {
-            if(0 <= r-i && r-i < map.length && 0 <= c+i && c+i < map[0].length && map[r-i][c+i] === word[i]) {
-                if(i === 3) part1++;
-            } else {
-                break;
-            }
-        }
-
-        // 4. check E
-        for(let i=1; i<=3; i++) {
-            if(0 <= r && r < map.length && 0 <= c+i && c+i < map[0].length && map[r][c+i] === word[i]) {
-                if(i === 3) part1++;
-            } else {
-                break;
-            }
-        }
-
-        // 5. check SE
-        for(let i=1; i<=3; i++) {
-            if(0 <= r+i && r+i < map.length && 0 <= c+i && c+i < map[0].length && map[r+i][c+i] === word[i]) {
-                if(i === 3) part1++;
-            } else {
-                break;
-            }
-        }
-
-        // 6. check S
-        for(let i=1; i<=3; i++) {
-            if(0 <= r+i && r+i < map.length && 0 <= c && c < map[0].length && map[r+i][c] === word[i]) {
-                if(i === 3) part1++;
-            } else {
-                break;
-            }
-        }
-
-        // 7. check SW
-        for(let i=1; i<=3; i++) {
-            if(0 <= r+i && r+i < map.length && 0 <= c-i && c-i < map[0].length && map[r+i][c-i] === word[i]) {
-                if(i === 3) part1++;
-            } else {
-                break;
-            }
-        }
-
-        // 8. check W
-        for(let i=1; i<=3; i++) {
-            if(0 <= r && r < map.length && 0 <= c-i && c-i < map[0].length && map[r][c-i] === word[i]) {
-                if(i === 3) part1++;
-            } else {
-                break;
+        for(const dir of directions) {
+            let [dr,dc] = dir;
+            for(let i = 1; i <= word.length-1; i++) {
+                if(0 <= r+i*dr && r+i*dr < map.length && 0 <= c+i*dc && c+i*dc < map[0].length &&
+                    map[r+i*dr][c+i*dc] === word[i]
+                ) {
+                    if(i === word.length-1) {
+                        part1++;
+                    }
+                } else {
+                    break;
+                }
             }
         }
     }
 
     console.log(part1);
 
-    // part 2
     let [r,c] = [0,0];
     let part2 = 0;
 
