@@ -6,12 +6,13 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
 
     const lines = inputData.split("\r\n");
     
-    let breakLine = lines.indexOf("");
-    let rules = new Set(lines.slice(0,breakLine));
-    let pages = lines.slice(breakLine+1).map(page => page.split(','))
+    const breakLine = lines.indexOf("");
+    const rules = new Set(lines.slice(0,breakLine));
+    const pages = lines.slice(breakLine+1).map(page => page.split(','))
     
     let part1 = 0;
-    let pagesInCorrectOrder = [];
+    const pagesInCorrectOrder = [];
+    const pagesInIncorrectOrder = [];
 
     pages.forEach(page => {
         let isInOrder = true;
@@ -22,7 +23,11 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
                 }
             }
         }
-        if(isInOrder) pagesInCorrectOrder.push(page);
+        if(isInOrder) {
+            pagesInCorrectOrder.push(page);
+        } else {
+            pagesInIncorrectOrder.push(page);
+        }
     });
 
 
@@ -32,4 +37,24 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
     });
 
     console.log(part1);
+
+    function sortPages(nums) {
+        for(let i=0; i<nums.length-1; i++) {
+            for(let j=i+1;j<nums.length; j++) {
+                if(rules.has(`${nums[j]}|${nums[i]}`)) {
+                    [nums[i],nums[j]] = [nums[j],nums[i]]
+                }
+            }
+        }
+    }
+
+    let part2 = 0;
+
+    pagesInIncorrectOrder.forEach(pages => {
+        sortPages(pages);
+        let mid = Math.floor(pages.length/2)
+        part2 += parseInt(pages[mid]);
+    });
+
+    console.log(part2);
 });
