@@ -8,7 +8,7 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
     
     const breakLine = lines.indexOf("");
     const rules = new Set(lines.slice(0,breakLine));
-    const pages = lines.slice(breakLine+1).map(page => page.split(','))
+    const pages = lines.slice(breakLine+1).map(page => page.split(','));
     
     let part1 = 0;
     const pagesInCorrectOrder = [];
@@ -18,9 +18,12 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
         let isInOrder = true;
         for(let i=0; i<page.length-1; i++) {
             for(let j=i+1; j<page.length; j++) {
+                // note that we are checking if there is a REVERSED ORDER rule
                 if(rules.has(`${page[j]}|${page[i]}`)) {
-                    isInOrder = false
+                    isInOrder = false;
+                    break;
                 }
+                if(!isInOrder) break;
             }
         }
         if(isInOrder) {
@@ -30,9 +33,8 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
         }
     });
 
-
     pagesInCorrectOrder.forEach(pages => {
-        let mid = Math.floor(pages.length/2)
+        let mid = Math.floor(pages.length/2);
         part1 += parseInt(pages[mid]);
     });
 
@@ -42,7 +44,7 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
         for(let i=0; i<nums.length-1; i++) {
             for(let j=i+1;j<nums.length; j++) {
                 if(rules.has(`${nums[j]}|${nums[i]}`)) {
-                    [nums[i],nums[j]] = [nums[j],nums[i]]
+                    [nums[i],nums[j]] = [nums[j],nums[i]];
                 }
             }
         }
@@ -52,7 +54,7 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
 
     pagesInIncorrectOrder.forEach(pages => {
         sortPages(pages);
-        let mid = Math.floor(pages.length/2)
+        let mid = Math.floor(pages.length/2);
         part2 += parseInt(pages[mid]);
     });
 
