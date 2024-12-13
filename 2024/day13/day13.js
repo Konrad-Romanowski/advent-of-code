@@ -24,6 +24,7 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
 
     let part1 = 0;
 
+    // brute force solution part1
     for(const m of clawMachines) {
         let minCost = Infinity;
         let currCost;
@@ -41,4 +42,23 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
     }
 
     console.log(part1);
+
+    let part2 = 0;
+    let additionalPrize = 10000000000000;
+
+    // matrix solutlution part2
+    for(const m of clawMachines) {
+        let det = m.A[0]*m.B[1] - m.A[1]*m.B[0];
+        let detA = (m.prize[0]+additionalPrize)*m.B[1] - (m.prize[1]+additionalPrize)*m.B[0];
+        let detB = m.A[0]*(m.prize[1]+additionalPrize) - m.A[1]*(m.prize[0]+additionalPrize);
+
+        let a = detA/det;
+        let b = detB/det;
+
+        if(a === parseInt(a) && b === parseInt(b)) {
+            part2+= a*costA + b*costB;
+        }
+    }
+
+    console.log(part2);
 });
