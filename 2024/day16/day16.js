@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { PriorityQueue } from './PriorityQueue.js';
+import path from 'path';
 
 function rotateRight(dir) {
     let [dr,dc] = dir;
@@ -28,49 +29,21 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
     let pq = new PriorityQueue();
     
     let visited = new Set();
-    pq.enqueue([sr,sc,dir,score],score); // row, col, direction, score
+    let path = new Set();
+    path.add(JSON.stringify([sr,sc]))
+    pq.enqueue([sr,sc,dir,score,path],score); // row, col, direction, score, currentPath
+
+    let allPaths = [];
 
     while(pq.items.length) {
-        let [r,c,dir,score] = pq.dequeue().item;
-        visited.add(JSON.stringify([r,c]));
-
-        if(r === end[0] && c === end[1]) {
-            minScore = Math.min(score,minScore);
-            break;
-        }
-
-        let nextDir = [dir,rotateRight(dir),rotateLeft(dir)];
-
-        for(let ndir of nextDir) {
-            let [nr,nc,nd] = [r+ndir[0],c+ndir[1],ndir];
-            // in this apporoach at the same time we rotate and make a move
-            let scoreToAdd = nd === dir ? 1 : 1001; // be careful 'nd' & 'dir' are arrays (reference comparison)
-            let ns = score + scoreToAdd;
-
-            if(!visited.has(JSON.stringify([nr,nc])) && map[nr][nc] !== "#") {
-                pq.enqueue([nr,nc,nd,ns],ns);
-            }
-        }
-    }
-
-    let part1 = minScore;
-    console.log(part1);
-
-    visited.clear();
-    let bestPathTiles = new Set();
-    bestPathTiles.add(JSON.stringify([sr,sc]));
-    let pq2 = new PriorityQueue();
-
-    score = 0;
-    pq2.enqueue([sr,sc,dir,score,new Set()],score); // row, col, direction, score, currentPath
-
-    while(pq2.items.length) {
-        let [r,c,dir,score,currentPath] = pq2.dequeue().item;
+        let [r,c,dir,score,currentPath] = pq.dequeue().item;
         visited.add(JSON.stringify([r,c,dir]));
 
         if(score > minScore) continue;
-        if(r === end[0] && c === end[1] && score === minScore) {
-            bestPathTiles = new Set([...bestPathTiles, ...currentPath]);
+
+        if(r === end[0] && c === end[1]) {
+            minScore = Math.min(score,minScore);
+            allPaths.push({path: currentPath, score});
         }
 
         let nextDir = [dir,rotateRight(dir),rotateLeft(dir)];
@@ -82,11 +55,25 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
             let ns = score + scoreToAdd;
 
             if(!visited.has(JSON.stringify([nr,nc,nd])) && map[nr][nc] !== "#") {
-                const updatedPath = structuredClone(currentPath);
-                pq2.enqueue([nr,nc,nd,ns,updatedPath.add(JSON.stringify([nr,nc]))],ns);
+                const updatedPath = new Set(currentPath);
+                updatedPath.add(JSON.stringify([nr,nc]));
+                pq.enqueue([nr,nc,nd,ns,updatedPath],ns);
             }
         }
     }
-    let part2 = bestPathTiles.size
+
+    let part1 = minScore;
+    console.log(part1);
+
+    const bestPaths = allPaths.filter(path => path.score === minScore);
+    let bestPathTiles = new Set();
+
+    bestPaths.forEach(bestPath => {
+        bestPath.path.forEach(tile => {
+            bestPathTiles.add(tile);
+        });
+    });
+
+    let part2 = bestPathTiles.size;
     console.log(part2);
 });
