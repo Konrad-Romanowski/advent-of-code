@@ -11,41 +11,37 @@ fs.readFile('input.txt','utf-8',(err,inputData) => {
     const visisted = new Set();
     let part1 = 0;
 
-    for(let row=0; row<ROWS; row++) {
-        for(let col=0; col<COLS; col++) {
+    for(let row = 0; row < map.length; row++) {
+        for(let col = 0; col < map[0].length; col++) {
+            let area = 1;
+            let perimeter = 0;
             if(!visisted.has(JSON.stringify([row,col]))) {
-                let areaTiles = new Set();
-                let q = [[row,col,map[row][col]]]  // row, col, symbol
+                let q = [[row,col,map[row][col]]] // row, col, symbol
+                visisted.add(JSON.stringify([row,col]));
+
                 while(q.length) {
                     let [r,c,s] = q.shift();
-                    visisted.add(JSON.stringify([r,c]));
-                    areaTiles.add(JSON.stringify([r,c]));
                     let nei = [[r-1,c],[r,c+1],[r+1,c],[r,c-1]];
+
                     for(const n of nei) {
                         let [nr,nc] = n;
+
+                        if(nr < 0 || ROWS <= nr || nc < 0 || COLS <= nc) perimeter++;
+                        if(0 <= nr && nr < ROWS && 0 <= nc && nc < COLS && map[nr][nc] !== s) perimeter++;
+
                         if(0 <= nr && nr < ROWS && 0 <= nc && nc < COLS &&
-                            !visisted.has(JSON.stringify([nr,nc])) && s === map[nr][nc]
+                            !visisted.has(JSON.stringify([nr,nc])) && map[nr][nc] === s
                         ) {
-                            q.push([nr,nc,s]);
+                            area++;
+                            visisted.add(JSON.stringify([nr,nc]));
+                            q.push([nr,nc,map[nr][nc]]);
                         }
                     }
                 }
-                let perimeter = 0;
-                for(let pos of areaTiles) {
-                    let [r,c] = JSON.parse(pos);
-                    let s = map[r][c];
-                    let nei = [[r-1,c],[r,c+1],[r+1,c],[r,c-1]];
-                    for(const n of nei) {
-                        let [nr,nc] = n;
-                        if(nr === -1 || nr === ROWS || nc === -1 || nc === COLS) perimeter++;
-                        if(0 <= nr && nr < ROWS && 0 <= nc && nc < COLS) {
-                            if(map[nr][nc] !== s) perimeter++;
-                        }
-                    }
-                }
-                part1 += perimeter * areaTiles.size;
+                part1 += area * perimeter;
             }
-        }    
+        }
     }
+
     console.log(part1);
 });
