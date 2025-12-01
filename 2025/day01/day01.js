@@ -7,15 +7,14 @@ fs.readFile('input.in','utf-8',(err,inputData) => {
     let p1 = 0;
     let p2 = 0;
     let cur = 50;
+    const MOD = 100;
 
     rotations.forEach(instruction => {
         let dir = instruction[0] === "L" ? -1 : 1;
         let steps = dir * parseInt(instruction.slice(1));
         
         while(steps !== 0) {
-            cur += dir;
-            if(dir === 1 && cur === 100) cur = 0;
-            if(dir === -1 && cur === -1) cur = 99;
+            cur = (cur+dir) % MOD;
             if(cur === 0) p2++;
             steps -= dir;
         }
