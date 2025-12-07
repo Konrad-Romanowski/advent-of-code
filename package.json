@@ -5,5 +5,8 @@
   "type": "module",
   "keywords": [],
   "author": "Konrad Romanowski",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@datastructures-js/queue": "^4.3.0"
+  }
 }
