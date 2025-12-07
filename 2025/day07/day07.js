@@ -7,38 +7,57 @@ fs.readFile('input.in','utf-8',(err,inputData) => {
     const ROWS = map.length;
     const COLS = map[0].length;
 
-    let start;
+    let sr = 0;
+    let sc;
     
     for(let c = 0; c < COLS; c++) {
         if(map[0][c] === "S") {
-            start = [0,c];
+            sc = c;
             break;
         }
     }
 
     let p1 = 0;
+    let p2 = 0;
     
-    let beams = new Set();
-    beams.add(JSON.stringify(start));
+    let BEAMS = new Set();
+    BEAMS.add(JSON.stringify([sr,sc]));
+    
+    const memo = new Array(ROWS).fill(0).map(_ => new Array(COLS).fill(0));
+    memo[sr][sc] = 1;
 
-    while(beams.size) {
+    while(BEAMS.size) {
         const nextBeams = new Set();
-
-        beams.forEach(beam => {
+        
+        for(let beam of BEAMS) {
             let [r,c] = JSON.parse(beam);
+            let cur = memo[r][c];
 
-            if(r !== ROWS - 1) {
-                if(map[r+1][c] === "^") {
-                    p1++;
-                    if(0 <= c-1) nextBeams.add(JSON.stringify([r+1, c-1]));
-                    if(c+1 < COLS) nextBeams.add(JSON.stringify([r+1, c+1]));
-                } else {
-                    nextBeams.add(JSON.stringify([r+1, c]));
+            if(r === ROWS-1) continue;
+
+            if(map[r+1][c] === "^") {
+                p1++;
+                if(0 <= c-1) {
+                    nextBeams.add(JSON.stringify([r+1, c-1]));
+                    memo[r+1][c-1] += cur;
                 }
+                if(c+1 < COLS) {
+                    nextBeams.add(JSON.stringify([r+1, c+1]));
+                    memo[r+1][c+1] += cur;
+                }
+            } else {
+                nextBeams.add(JSON.stringify([r+1, c]));
+                memo[r+1][c] += cur;
             }
-        });
-        beams = new Set(nextBeams);
+        };
+
+        BEAMS = new Set(nextBeams);
     }
 
+    for(let c = 0; c < COLS; c++) {
+        p2 += memo[ROWS-1][c];
+    }
+    
     console.log(`p1: ${p1}`);
+    console.log(`p2: ${p2}`);
 });
