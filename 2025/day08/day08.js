@@ -79,4 +79,25 @@ fs.readFile('input.in','utf-8',(err,inputData) => {
     }
 
     console.log(`p1: ${p1}`);
+
+    let p2 = 1;
+
+    while(true) {
+        let [pt1,pt2,_] = PQ.pop();
+        let idx1 = idx[JSON.stringify(pt1)];
+        let idx2 = idx[JSON.stringify(pt2)];
+
+        union(idx1,idx2);
+
+        for(let i = 0; i < parent.length; i++) {
+            find(i);
+        }
+        
+        if(parent.every(item => item === parent[0])) {
+            p2 = pt1[0] * pt2[0];
+            break;
+        }
+    }
+
+    console.log(`p2: ${p2}`);
 });
