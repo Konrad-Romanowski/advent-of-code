@@ -17,6 +17,7 @@ fs.readFile('input.in','utf-8',(err,inputData) => {
         }
     });
 
+    // part 1
     let p1 = 0;
     
     const q = new Queue();
@@ -40,4 +41,32 @@ fs.readFile('input.in','utf-8',(err,inputData) => {
     }
 
     console.log(`p1: ${p1}`);
+
+    // part 2
+    function numOfPathsFromTo(fromNode,toNode) {
+        const memo = {};
+
+        function countPathsFrom(curNode) {
+            if(curNode in memo) return memo[curNode];
+            if(curNode === toNode) return 1;
+
+            let totalPaths = 0;
+            for(let node of adj[curNode]) {
+                totalPaths += countPathsFrom(node);
+            }
+
+            memo[curNode] = totalPaths;
+
+            return memo[curNode];
+        }
+
+        return countPathsFrom(fromNode);
+    }
+
+    let p2 = 0
+
+    p2 += numOfPathsFromTo('svr','fft') * numOfPathsFromTo('fft','dac') * numOfPathsFromTo('dac','out');
+    p2 += numOfPathsFromTo('svr','dac') * numOfPathsFromTo('dac','fft') * numOfPathsFromTo('fft','out');
+    
+    console.log(`p2: ${p2}`);
 });
